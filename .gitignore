@@ -1,7 +1,6 @@
 # Experiment output (regenerate with run_experiments.py)
 exp_results.txt
 fast_results.txt
-results.txt
 
 # Python
 __pycache__/
