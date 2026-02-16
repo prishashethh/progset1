@@ -38,3 +38,4 @@ Example: `./randmst 0 128 5 0` → average MST weight over 5 trials, n=128, dime
 ## Output for Partner B
 
 `generate_pruned_edges(n, dimension, seed=..., grace=1.5)` returns an **adjacency list**: `{vertex: [(neighbor, weight), ...]}`. Partner B’s `prim` and `kruskal` in `mst_algorithm.py` consume this format.
+

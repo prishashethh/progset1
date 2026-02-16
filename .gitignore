@@ -1,0 +1,18 @@
+# Generated graphs (large; run generate_all_graphs.py to create)
+generated_graphs/
+
+# Experiment output (regenerate with run_experiments.py)
+results.txt
+exp_results.txt
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.Python
+*.so
+
+# IDE / OS
+.DS_Store
+*.swp
+*.swo
