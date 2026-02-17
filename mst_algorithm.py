@@ -94,77 +94,63 @@ def prim(graph, start=None):
 
     return finalWeight, finalEdges
 
-# KRUSKAL'S ALGORITHM 
-# Disjoint Set Union-Find 
-def makeSet(parent, rank, x):
-    parent[x] = x
-    rank[x] = 0
+class DisjointSet:
+    def __init__(self, vertices):
+        self.parent = {v: v for v in vertices}
+        self.rank = {v: 0 for v in vertices}
 
-def find(parent, x):
-    if parent[x] != x:
-        parent[x] = find(parent, parent[x])  # path compression
-    return parent[x]
+    def find(self, x):
+        if self.parent[x] != x:
+            self.parent[x] = self.find(self.parent[x])  # path compression
+        return self.parent[x]
 
+    def same_set(self, a, b):
+        return self.find(a) == self.find(b)
 
-def union(parent, rank, x, y):
-    rx = find(parent, x)
-    ry = find(parent, y)
-    if rx == ry:
-        return
-    if rank[rx] < rank[ry]:
-        parent[rx] = ry
-    elif rank[ry] < rank[rx]:
-        parent[ry] = rx
-    else:
-        parent[ry] = rx
-        rank[rx] += 1
+    def union(self, a, b):
+        ra, rb = self.find(a), self.find(b)
+        if ra == rb:
+            return False  # union didn't happen
 
+        # union by rank
+        if self.rank[ra] < self.rank[rb]:
+            self.parent[ra] = rb
+        elif self.rank[ra] > self.rank[rb]:
+            self.parent[rb] = ra
+        else:
+            self.parent[rb] = ra
+            self.rank[ra] += 1
 
-# The actual Kruskal's algorithm 
+        return True  # union happened
+
 def kruskal(graph):
-    # Getting the vertices from the graph
     vertices = getVertices(graph)
     if not vertices:
         return 0, []
 
-    # Build list of all edges (u, v, w)
+    # Build undirected edge list with deduplication
     edges = []
+    seen = set()
     for u in graph:
-        for (v, w) in graph[u]:
+        for v, w in graph[u]:
+            key = (u, v) if u <= v else (v, u)  # works if vertices are comparable
+            if key in seen:
+                continue
+            seen.add(key)
             edges.append((u, v, w))
 
-    edges.sort(key=lambda e: e[2])  # sort by weight
+    edges.sort(key=lambda e: e[2])
 
-    parent = {}
-    rank = {}
-    for v in vertices:
-        makeSet(parent, rank, v)
+    dsu = DisjointSet(vertices)
+    mst_weight = 0
+    mst_edges = []
 
-    # Building the MST edge list and total weight
-    # We sort the edges by weight and then add the lightest edge that doesn't create a cycle
-    finalWeight = 0
-    finalEdges = []
-    for (u, v, w) in edges:
-        if find(parent, u) != find(parent, v):
-            union(parent, rank, u, v)
-            finalWeight += w
-            finalEdges.append((u, v, w))
+    # Early stop once we have |V|-1 edges
+    for u, v, w in edges:
+        if dsu.union(u, v):
+            mst_edges.append((u, v, w))
+            mst_weight += w
+            if len(mst_edges) == len(vertices) - 1:
+                break
 
-    return finalWeight, finalEdges
-
-# EXAMPLE 
-graph10 = {
-    "a": [("b", 4), ("c", 3), ("d", 7)],
-    "b": [("a", 4), ("d", 6), ("e", 5)],
-    "c": [("a", 3), ("d", 8), ("f", 10)],
-    "d": [("a", 7), ("b", 6), ("c", 8), ("e", 2), ("g", 9)],
-    "e": [("b", 5), ("d", 2), ("f", 1), ("h", 4)],
-    "f": [("c", 10), ("e", 1), ("i", 3)],
-    "g": [("d", 9), ("h", 2), ("j", 6)],
-    "h": [("e", 4), ("g", 2), ("i", 5)],
-    "i": [("f", 3), ("h", 5), ("j", 7)],
-    "j": [("g", 6), ("i", 7)],
-}
-
-print(prim(graph10))
-print(kruskal(graph10)) 
+    return mst_weight, mst_edges

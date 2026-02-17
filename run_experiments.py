@@ -1,8 +1,6 @@
-#!/usr/bin/env python3
-"""
-Run all experiments for the PA1 report.
-Outputs tables of average MST weight for each graph type and n value.
-"""
+# Used to run experiements for the report 
+# Outputs tables of average MST weight for each graph type and n value.
+
 
 import subprocess
 import sys
@@ -20,9 +18,8 @@ DIMENSION_NAMES = {
     4: "4D (unit hypercube)",
 }
 
-
 def run_single(n: int, dim: int) -> float:
-    """Run randmst and return average MST weight."""
+    # Run randmst and return average MST weight.
     result = subprocess.run(
         [sys.executable, "randmst.py", "0", str(n), str(NUM_TRIALS), str(dim)],
         capture_output=True,
@@ -30,26 +27,26 @@ def run_single(n: int, dim: int) -> float:
         cwd=".",
     )
     result.check_returncode()
-    # Last line is randmst output (mst_algorithm may print example when imported)
+    # Last line is randmst output
     lines = result.stdout.strip().split("\n")
     avg = float(lines[-1].split()[0])
     return avg
 
 
 def main() -> None:
-    # Complete graphs: dimensions 0, 2, 3, 4
-    for dim in [0, 2, 3, 4]:
-        print(f"\n{'='*60}")
-        print(f"Dimension {dim}: {DIMENSION_NAMES[dim]}")
-        print("=" * 60)
-        print(f"{'n':>10} | {'Avg MST Weight':>16}")
-        print("-" * 30)
-        for n in COMPLETE_GRAPH_NS:
-            try:
-                avg = run_single(n, dim)
-                print(f"{n:>10} | {avg:>16.6f}")
-            except Exception as e:
-                print(f"{n:>10} | ERROR: {e}")
+    # Uncomment to run complete graphs (0, 2, 3, 4):
+    # for dim in [0, 2, 3, 4]:
+    #     print(f"\n{'='*60}")
+    #     print(f"Dimension {dim}: {DIMENSION_NAMES[dim]}")
+    #     print("=" * 60)
+    #     print(f"{'n':>10} | {'Avg MST Weight':>16}")
+    #     print("-" * 30)
+    #     for n in COMPLETE_GRAPH_NS:
+    #         try:
+    #             avg = run_single(n, dim)
+    #             print(f"{n:>10} | {avg:>16.6f}")
+    #         except Exception as e:
+    #             print(f"{n:>10} | ERROR: {e}")
 
     # Hypercube: dimension 1
     dim = 1

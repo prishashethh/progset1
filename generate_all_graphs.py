@@ -1,15 +1,4 @@
-#!/usr/bin/env python3
-"""
-Run the graph generator for all (n, dimension) cases and write each to a file.
-Shows progress in the terminal.
-
-Usage:
-  python3 generate_all_graphs.py              # use default output dir and case set
-  python3 generate_all_graphs.py --out DIR    # write files to DIR (default: generated_graphs)
-  python3 generate_all_graphs.py --fast       # only fast/small n (default)
-  python3 generate_all_graphs.py --all        # all n (can be slow and use a lot of disk)
-"""
-
+# Run the graph generator for all the graphs for us to use in the report 
 import os
 import sys
 import time
